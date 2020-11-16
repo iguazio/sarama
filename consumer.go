@@ -775,7 +775,11 @@ func (bc *brokerConsumer) subscriptionManager() {
 
 			Logger.Printf("Accumulated %d new subscriptions", len(subscribingPartitionConsumers))
 
-			bc.wait <- none{}
+			select {
+				case bc.wait <- none{}:
+				default:
+			}
+
 			bc.newSubscriptions <- subscribingPartitionConsumers
 
 			// clear out the batch
